@@ -1,0 +1,163 @@
+<!--
+ * @Author: hanmingda
+ * @Date: 2021-11-12 15:54:04
+ * @LastEditors: hanmingda
+ * @LastEditTime: 2022-07-29 16:20:13
+ * @Description: 
+ * @FilePath: \navigation\index.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="./assets/tiger.ico" type="image/x-icon" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/index.css" />
+    <title>Colin导航</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <div v-cloak class="main-container">
+        <div class="center-container">
+          <!-- 时间显示 -->
+          <div class="time-container">
+            <div class="current-time">
+              {{ currentTime }}
+            </div>
+            <div class="current-date">
+              {{ currentDate }}
+            </div>
+          </div>
+          <!-- 搜索框部分 -->
+          <div class="search-box" v-if="settings.searchEngine">
+            <!-- 搜索建议框 -->
+            <div class="advice_box" v-if="advices.length>0" :style="advices.length > 0 ? 'opacity:1' : ''">
+              <div
+                :class="index === advice_selected?'selected':''"
+                class="advice_item"
+                @mouseenter="advice_selected = index"
+                v-for="advice,index in advices"
+                @click="advice_clicked(index)"
+              >
+                {{advice}}
+              </div>
+            </div>
+            <!-- 选择搜索引擎 -->
+            <div
+              v-if="show_engine_key != 0"
+              :class="show_engine_box?'show':'hide'"
+              class="engine-box"
+              @blur="hideEngineBox(30)"
+              tabindex="0"
+              hidefocus="true"
+              >
+              <div
+                class="engine"
+                v-for="engine,id in getEngines()"
+                @click="settings.searchEngine.selected = id;hideEngineBox()"
+              >
+                <div
+                  class="icon"
+                  :style="{backgroundImage:'url('+engine.icon+')'}"
+                ></div>
+                <div class="name">{{engine.name}}</div>
+              </div>
+            </div>
+            <!-- <div
+              :class="show_engine_box?'show':'hide'"
+              class="engine-box"
+              @blur="hideEngineBox(30)"
+              tabindex="0"
+              hidefocus="true"
+              v-show="show_engine_box === true"
+            >
+              <div
+                class="engine"
+                v-for="engine,id in getEngines()"
+                @click="settings.searchEngine.selected = id;hideEngineBox()"
+              >
+                <div
+                  class="icon"
+                  :style="{backgroundImage:'url('+engine.icon+')',backgroundColor:engine.mainColor}"
+                ></div>
+                <div class="name">{{engine.name}}</div>
+              </div>
+              <div class="engine not_show" v-for="i in 4"></div>
+            </div> -->
+            <!-- 搜索框左侧图标 -->
+            <div
+              class="search-engins"
+              @click="show_engine_box?hideEngineBox():showEngineBox()"
+            >
+              <!-- @click="show_engine_box?hideEngineBox():showEngineBox()"> -->
+              <div
+                class="selected-icon"
+                :style="{backgroundImage:'url('+getSelectedEngine().icon+')'}"
+              ></div>
+              <!-- <div
+                class="engine-name"
+                :style="{color:getSelectedEngine().textColor}"
+              >
+                {{getSelectedEngine().name}}
+              </div> -->
+              <div class="show-more"></div>
+            </div>
+            <!-- 搜索框主体 -->
+            <input
+              id="search-input"
+              placeholder="输入并搜索"
+              autocomplete="off"
+              onkeydown="return input_keydown(event)"
+              oninput="showAdvice()"
+            />
+            <!-- 搜索按钮 -->
+            <div class="search-btn" @click="search()"></div>
+          </div>
+          <!-- 网站列表部分 -->
+          <div class="sites-container">
+            <div class="second-kind" v-for="kind_val,kind_name,_ in sitesData">
+              <div class="kind-name">
+                <div
+                  v-if="kind_val.icon"
+                  class="icon"
+                  :style="{backgroundImage:'url('+kind_val.icon+')'}"
+                ></div>
+                <div class="name">{{kind_name}}</div>
+              </div>
+              <div class="sites-box">
+                <div
+                  @click="open(site_val.url)"
+                  class="site-box"
+                  v-for="site_val in kind_val.data"
+                  :title="site_val.name + '-' + site_val.describe"
+                >
+                  <div class="icon" :data-original="site_val.icon"></div>
+                  <div class="info">
+                    <div class="name">{{site_val.name}}</div>
+                    <div class="describe">{{site_val.describe}}</div>
+                  </div>
+                </div>
+                <!-- <div class="site-box not_show" v-for="i in 10"></div> -->
+              </div>
+            </div>
+          </div>
+          <!-- 底部 -->
+          <div v-if="JSON.stringify(settings)!='{}'" class="footer-container">
+            <div>邮箱：hmd0929@163.com</div>
+            <div style="margin-top:5px">Designed By Colin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <footer>
+    <script src="./js/vue3.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/jquery.lazyload.min.js"></script>
+    <script src="./js/moment.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/index.js"></script>
+  </footer>
+</html>
